@@ -11,6 +11,8 @@ export ZSH="/Users/leroi/.oh-my-zsh"
 # zsh configs
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
+POWERLEVEL9K_MODE="awesome-patched"
+
 plugins=(git osx zsh-autosuggestions zsh-syntax-highlighting nvm)
 
 source $ZSH/oh-my-zsh.sh
