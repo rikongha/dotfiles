@@ -11,9 +11,9 @@ export ZSH="/Users/leroi/.oh-my-zsh"
 # zsh configs
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
-POWERLEVEL9K_MODE="awesome-patched"
+POWERLEVEL9K_MODE="nerdfont-complete"
 
-plugins=(git osx zsh-autosuggestions zsh-syntax-highlighting nvm)
+plugins=(git osx zsh-autosuggestions zsh-syntax-highlighting nvm fzf)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -26,34 +26,19 @@ alias gbc="git branch | cat" #pipes git branch output to cat instead of less
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 
-####### NVM CONFIG #############
-# NVM impacts terminal startup time for this reason nvm is lazy loaded
-export NVM_DIR="$HOME/.nvm"
+# refactored nvm lazy loading to find all commands that require node
+declare -a NODE_GLOBALS=(`find ~/.nvm/versions/node -maxdepth 3 -type l -wholename '*/bin/*' | xargs -n1 basename | sort | uniq`)
 
-nvm_init() {
-	echo "Lazy loading nvm..."
-	# Remove nvm functions
-  	unfunction nvm
-  	unfunction npm
-  	unfunction node
-    # Load nvm
+NODE_GLOBALS+=("node")
+NODE_GLOBALS+=("nvm")
+
+load_nvm () {
+	echo "Lazy loading nvm at first run..."
+    export NVM_DIR=~/.nvm
     [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"
   	[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 }
 
-nvm() {
-    nvm_init
-    # Call nvm
-    $0 "$@"
-}
-
-npm() {
-	nvm_init # init 
-    $0 "$@"  # re execute command
-}
-
-node() {
-	nvm_init
-    # Call nvm
-    $0 "$@"
-}
+for cmd in "${NODE_GLOBALS[@]}"; do
+    eval "${cmd}(){ unset -f ${NODE_GLOBALS}; load_nvm; ${cmd} \$@ }"
+done

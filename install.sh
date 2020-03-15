@@ -30,15 +30,46 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
 
+# install useful terminal tools
+brew install fzf tree ack
+
 # install docker
 brew cask install docker
 
+# install vim, get vimrc and maximum awesome
+brew install vim
+git clone https://github.com/amix/vimrc.git ~/.vim_runtime
+sh ~/.vim_runtime/install_awesome_vimrc.sh
+cd ~/.vim_runtime && git pull --rebase && cd -
+git clone https://github.com/square/maximum-awesome.git
+cd maximum-awesome
+rake
 
-# install golang
-curl https://dl.google.com/go/go1.14.darwin-amd64.tar.gz
+# install vs code
+brew cask install visual-studio-code
 
-# move golang to installation directory
-tar -C /usr/local -xzf go1.14.darwin-amd64.tar.gz
+# install postgres
+brew install postgres
+brew services start postgresql
+
+# install mysql
+brew install mysql
+# brew services start mysql
+mysql.server start
+
+# setup support for ntfs
+# brew cask install osxfuse
+# brew install ntfs-3g
+
+# Create a symlink for mount_ntfs
+# sudo mv /sbin/mount_ntfs /sbin/mount_ntfs.original
+# sudo ln -s /usr/local/sbin/mount_ntfs /sbin/mount_ntfs
+
+# TODO install golang
+brew install go
+go version
+
+# TODO setup gopath
 
 # export the go path in the zshrc file
 echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.zshrc
