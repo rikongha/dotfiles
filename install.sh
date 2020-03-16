@@ -9,15 +9,8 @@ xcode-select --install
 # install homebrew first
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-# install zsh
-brew install zsh
-
-#install wget
-brew install wget
-
-# install iterm2
-brew cask install iterm2
-
+# install zsh, wget, iterm2
+brew install zsh wget iterm2
 
 # install oh-my-zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
@@ -36,8 +29,8 @@ brew install fzf tree ack
 # install docker
 brew cask install docker
 
-# install vim, get vimrc and maximum awesome
-brew install vim
+# install vim, neovim, get vimrc and maximum awesome
+brew install vim neovim
 git clone https://github.com/amix/vimrc.git ~/.vim_runtime
 sh ~/.vim_runtime/install_awesome_vimrc.sh
 cd ~/.vim_runtime && git pull --rebase && cd -
@@ -48,16 +41,13 @@ rake
 # install vs code
 brew cask install visual-studio-code
 
-# install postgres
-brew install postgres
+# install postgres and mysql
+brew install postgres mysql
 brew services start postgresql
-
-# install mysql
-brew install mysql
 # brew services start mysql
 mysql.server start
 
-# setup support for ntfs
+# setup support for ntfs - could not get this to work properly in mojave, had to remove it
 # brew cask install osxfuse
 # brew install ntfs-3g
 
@@ -65,7 +55,17 @@ mysql.server start
 # sudo mv /sbin/mount_ntfs /sbin/mount_ntfs.original
 # sudo ln -s /usr/local/sbin/mount_ntfs /sbin/mount_ntfs
 
-# TODO install golang
+# setup up development folders
+mkdir -p ~/projects/{active, archive, config, resources, tmp}
+export PROJECTS="$HOME/projects"
+git clone https://github.com/rikongha/dotfiles.git ~/projects/config
+
+# TODO setup go
+# setup tools for Go development
+
+export GOROOT="$(brew --prefix golang)/libexec"
+export PATH="$PATH:${GOROOT}/bin"
+# test -d "${GOPATH}/src/github.com" || mkdir -p "${GOPATH}/src/github.com"
 brew install go
 go version
 
@@ -75,10 +75,11 @@ go version
 echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.zshrc
 
 # create go directory
-mkdir -p ~/projects/personal/src/github.com/leroi
+mkdir -p ~/projects/personal/src/github.com/rikongha
 
-# copy the zshrc 
-cat .zshrc >> ~/.zshrc
+# backup existing zshrc config and overwrite with copy from repo
+cp .zshrc .zshrc_bkup
+cat $PROJECTS/config/dotfiles/.zshrc > ~/.zshrc
 
 
 source ~/.zshrc
